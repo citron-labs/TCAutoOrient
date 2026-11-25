@@ -1,0 +1,19 @@
+Sharing TC Auto Orient
+
+Gmail may block this ZIP because it contains Windows launchers and PowerShell
+installation scripts. ZIP compression does not make executable attachments
+acceptable to Gmail. This source-build installer contains no precompiled DLL,
+but its scripts may still trigger Gmail attachment restrictions.
+
+Share the complete ZIP through a normal Google Drive download link:
+1. Upload TC-Auto-Orient-Source-Installer.zip to your Drive.
+2. Share that file with the intended recipient.
+3. Send the file's Drive link in your message.
+4. The recipient downloads and extracts the entire ZIP, closes Revit, and
+   double-clicks Install.cmd inside the TC-Auto-Orient folder.
+
+Google's guidance: https://support.google.com/mail/answer/6590/
+
+The package does not disable antivirus, bypass execution policy, change trust
+settings, elevate privileges, or download build tools. If organizational policy
+blocks installation, use your organization's approved software deployment process.

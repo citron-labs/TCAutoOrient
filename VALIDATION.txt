@@ -1,0 +1,22 @@
+TC Auto Orient - source installer validation
+Date: 2026-11-25
+
+Verified on this machine:
+- Revit 2024: local compilation using Windows .NET Framework C# 5 compiler.
+- Revit 2025: local compilation against installed Revit API and .NET 10 references.
+- Both local builds require no NuGet restore, Internet download or Visual Studio.
+- Graphical installer form constructs with three version choices and two detected.
+- Running Revit prevents installation before any live deployment.
+- 10 deployment checks: install, reinstall, rollback, XML/path escaping, uninstall,
+  preserving unrelated files, and safe staging cleanup.
+- End-to-end build/install/uninstall tested under isolated AppData, with only
+  process discovery mocked. No running Revit installation is changed by that test.
+- 88 orientation checks pass following the equivalent C# 5 syntax conversion.
+
+Limits:
+- Revit 2026 is not installed here; its new local compilation path is not tested.
+- The prior add-in build passed live rotation/shading tests in 2024 and 2025.
+  This installer rebuild was not hot-loaded into those running applications.
+- Interactive success/retry screens were constructed and reviewed in source;
+  automated tests verify the underlying installer, not a full manual setup session.
+- Successful file deployment does not itself prove add-in startup in Revit.
