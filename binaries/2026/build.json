@@ -1,0 +1,6 @@
+﻿{
+    "revitVersion":  "2026",
+    "minimumRuntimeMajor":  8,
+    "targetFramework":  "net8.0-windows",
+    "sha256":  "06524E0F961AE6F29A6615DE6090E6CCE8FF9F51900F5FE0EB2D13B8C99931D0"
+}

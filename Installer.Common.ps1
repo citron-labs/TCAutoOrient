@@ -43,6 +43,21 @@ function Assert-TCRevitClosed([string[]]$Versions) {
     }
 }
 
+function Get-TCBundledAssembly([string]$PackageRoot, [object]$Revit) {
+    $folder=Join-Path $PackageRoot ('binaries/'+$Revit.Version)
+    $dll=Join-Path $folder 'TCAutoOrient.dll'
+    $metadata=Join-Path $folder 'build.json'
+    if(!(Test-Path -LiteralPath $dll) -or !(Test-Path -LiteralPath $metadata)) {
+        throw "Bundled Revit $($Revit.Version) add-in is missing. Extract the complete offline installer ZIP."
+    }
+    $info=Get-Content -Raw -LiteralPath $metadata | ConvertFrom-Json
+    if([string]$info.revitVersion -ne $Revit.Version) { throw 'Bundled add-in version does not match the selected Revit version.' }
+    if([int]$info.minimumRuntimeMajor -gt $Revit.Runtime) { throw 'The bundled add-in requires a newer runtime than this Revit installation provides.' }
+    if((Get-FileHash -LiteralPath $dll -Algorithm SHA256).Hash -ne $info.sha256) { throw "Bundled Revit $($Revit.Version) DLL failed its integrity check. Download and extract a fresh package." }
+    if([Reflection.AssemblyName]::GetAssemblyName($dll).Name -ne 'TCAutoOrient') { throw 'Unexpected bundled assembly identity.' }
+    return $dll
+}
+
 function New-TCStage {
     $path = Join-Path ([IO.Path]::GetTempPath()) ('TCAutoOrient-' + [guid]::NewGuid().ToString('N'))
     New-Item -ItemType Directory -Path $path | Out-Null

@@ -1,26 +1,20 @@
-TC Auto Orient - source installer validation
+TC Auto Orient - Offline installer validation
 Date: 2026-11-25
 
-Verified on this machine:
-- Revit 2024: local compilation using Windows .NET Framework C# 5 compiler.
-- Revit 2025: local compilation against installed Revit API and .NET 10 references.
-- Both local builds require no NuGet restore, Internet download or Visual Studio.
-- Graphical installer form constructs with three version choices and two detected.
-- Running Revit prevents installation before any live deployment.
-- 10 deployment checks: install, reinstall, rollback, XML/path escaping, uninstall,
-  preserving unrelated files, and safe staging cleanup.
-- End-to-end build/install/uninstall tested under isolated AppData, with only
-  process discovery mocked. No running Revit installation is changed by that test.
-- 88 orientation checks pass following the equivalent C# 5 syntax conversion.
+- Release DLLs compiled successfully for Revit 2024, 2025, 2026, zero warnings/errors.
+- Normal installer uses bundled DLLs; no source build or SDK invocation.
+- 10 deployment checks passed: install, reinstall, rollback, XML escaping,
+  uninstall, preserving unrelated files, and staging cleanup safety.
+- 7 bundled checks passed: deployment for all three years, runtime compatibility
+  gate, version mismatch rejection and corrupted DLL rejection.
+- Revit 2024/2025 end-to-end installation/removal passed in isolated AppData,
+  with process discovery mocked and SDK invocation forbidden.
+- Setup form smoke test: three version choices, two installed versions detected.
+- Process-only execution-policy fix retained in launchers and setup worker.
 
 Limits:
-- Revit 2026 is not installed here; its new local compilation path is not tested.
-- The prior add-in build passed live rotation/shading tests in 2024 and 2025.
-  This installer rebuild was not hot-loaded into those running applications.
-- Interactive success/retry screens were constructed and reviewed in source;
-  automated tests verify the underlying installer, not a full manual setup session.
-- Successful file deployment does not itself prove add-in startup in Revit.
-
-Launcher fix: Install.cmd, Uninstall.cmd and the installation worker now use
-a process-only -ExecutionPolicy Bypass. Form startup and isolated 2024/2025
-installation/uninstallation were re-tested successfully. Group Policy is unchanged.
+- Revit 2026 is not installed here. Its deployment test is simulated.
+- The prior add-in passed 23 live checks in each of Revit 2024 and 2025.
+  These freshly compiled binaries have not been loaded into the running sessions.
+- File deployment tests do not prove Revit startup or full interactive UI behavior.
+- No native-2026-saved family/project is included; upgrade the supplied models.

@@ -1,77 +1,33 @@
-# TC Auto Orient ? Source Installer
+# TC Auto Orient - Offline Installer
 
-Double-click **Install.cmd** after extracting this entire folder. Setup builds
-TC Auto Orient against your installed Revit API and installs it for your Windows
-account. No precompiled add-in DLL or Autodesk API DLL is included in this package.
+Extract the entire **TC-Auto-Orient-Offline-Installer.zip**, close Revit, and double-click **Install.cmd**. Select Revit 2024, 2025 or 2026 and click Install.
 
-## Install
+This package contains a separately compiled add-in for each Revit version. Normal setup requires **no .NET SDK, Visual Studio, compilation, or Internet download**. Revit must already be installed. Revit 2024 uses the bundled .NET Framework 4.8 build; 2025/2026 use their respective .NET 8 builds.
 
-1. Extract **all** files from `TC-Auto-Orient-Source-Installer.zip`.
-2. Save your work and close the Revit versions you want to install into.
-3. Open the extracted `TC-Auto-Orient` folder and double-click **Install.cmd**.
-4. Select the installed Revit versions and click **Install**.
-5. Wait for **Installed successfully!**, click **Finish**, and start Revit.
+Setup installs for the current Windows account without administrator privileges. It verifies bundled DLL hashes, stages all selected versions, and backs up existing files before deployment. A deployment failure restores previous files. Setup logs are under %LOCALAPPDATA%/TCAutoOrient/SetupLogs/.
 
-The graphical setup shows progress and offers Retry and setup logs on failure.
-It does not close Revit automatically. Administrative privileges are not requested.
-The launchers use `-ExecutionPolicy Bypass` for their own PowerShell processes only.
-They do not change the saved CurrentUser or LocalMachine execution policy.
-Organizational Group Policy still takes precedence; use your organization's
-approved installation process if it blocks this launcher.
+Installed files are under %APPDATA%/Autodesk/Revit/Addins/<year>/:
+- TCAutoOrient.addin
+- TCAutoOrient/TCAutoOrient.dll
 
-### Prerequisites
+Double-click **Uninstall.cmd** to remove the add-in. Families, projects and unrelated files are preserved. Close Revit before installation, updates or removal.
 
-| Revit version | Local build requirements |
-| --- | --- |
-| 2024 | Installed Revit 2024 API and Windows .NET Framework 4.8 x64 compiler; no .NET SDK or Visual Studio required |
-| 2025 / 2026 | Installed matching Revit API, an x64 .NET SDK and matching reference pack |
+The launchers use a process-only PowerShell execution-policy override; saved policies are unchanged and organizational Group Policy takes precedence.
 
-The installer reads the installed Revit runtime configuration. Standard .NET 8
-installations need the .NET 8 reference pack; an updated Revit using .NET 10 needs
-the .NET 10 pack. These packs normally come with the corresponding SDK. Setup
-reports missing prerequisites instead of downloading them.
-
-Default API locations are `C:/Program Files/Autodesk/Revit <year>/`. For a custom
-location, use the command-line installer with exactly one version:
-
+For a custom Revit location:
 ```powershell
-./install.ps1 -Version 2024 -RevitPath 'D:/Autodesk/Revit 2024'
+./install.ps1 -Version 2025 -RevitPath 'D:/Autodesk/Revit 2025'
 ```
-
-Multiple versions can be selected in the window or specified as a quoted list:
-
-```powershell
-./install.ps1 -Version '2024,2025'
-```
-
-Select 2026 only on a machine with Revit 2026 installed.
 
 ## Installer architecture
 
-`Install.cmd` ? `InstallWindow.ps1` ? `install.ps1` ? `build.ps1` ? DLL + `.addin`
+Install.cmd -> InstallWindow.ps1 -> install.ps1 -> verified bundled DLL + .addin
 
-The build uses C# 5-compatible source and the local Revit assemblies. Revit 2024
-uses Windows' built-in Framework compiler; newer versions use the SDK's Roslyn
-compiler with local reference packs. There is no NuGet restore, network download,
-background service or Autodesk program-file modification in this workflow.
-
-All selected versions compile in a unique temporary staging directory before any
-installed files are replaced. Deployment backs up existing DLLs/manifests,
-verifies XML, assembly identity, absolute paths and SHA-256 content, and restores
-previous files if deployment fails. Failed staging files are retained for diagnosis;
-successful staging files are cleaned up.
-
-Installed files:
-
-```text
-%APPDATA%/Autodesk/Revit/Addins/<year>/
-  TCAutoOrient.addin
-  TCAutoOrient/TCAutoOrient.dll
+Source compilation remains an optional developer operation:
+```powershell
+./install.ps1 -Version '2024,2025' -BuildFromSource
 ```
-
-Setup logs are under `%LOCALAPPDATA%/TCAutoOrient/SetupLogs/`. Re-running Install
-updates or repairs the same registration. Close Revit before updates. Double-click
-**Uninstall.cmd** to remove the add-in; families, projects and unrelated files are kept.
+Only this optional mode requires the local compiler/reference packs matching the installed Revit runtime (including SDK 10 when Revit uses .NET 10). Normal graphical setup never invokes it.
 
 ## Included family and demonstration projects
 
@@ -106,29 +62,17 @@ Grouped devices are skipped by the updater. This tool does not resolve collision
 with unrelated annotations. Without the add-in, the family retains its last layout
 but no longer reacts automatically to rotations.
 
-## Testing and development
+## Validation
 
-See **VALIDATION.txt** for verified behavior and remaining limits. Local installer
-builds and isolated deployment tests pass for installed Revit 2024 and 2025.
-Revit 2026 is not installed here, so its new local build/install path is untested.
-The previously delivered add-in passed 23 live checks in each of 2024 and 2025.
+See VALIDATION.txt. Installation and removal are tested in isolated user-data directories for installed Revit 2024/2025. Revit 2026 compiled successfully and its payload deployment was tested in isolation; startup and model behavior in Revit 2026 remain untested.
 
 ```powershell
-./build.ps1 -Version '2024,2025'
 ./tests/Installer.Tests.ps1
+./tests/Bundled.Tests.ps1
 ./tests/Installer.EndToEnd.ps1
-powershell.exe -NoProfile -STA -File ./InstallWindow.ps1 -SmokeTest
-dotnet run --project tests/OrientationTests.csproj -c Release
+powershell.exe -NoProfile -ExecutionPolicy Bypass -STA -File ./InstallWindow.ps1 -SmokeTest
 ```
 
-Standalone build output goes under `artifacts/local/<year>`. The optional root
-`TCAutoOrient.csproj` supports IDE development; the installer compiles directly
-without MSBuild or project restore. For an updated runtime, IDE builds can use
-`-p:RuntimeTarget=net10.0-windows -p:RevitVersion=2025`.
+## Sharing
 
-## Sharing through Gmail
-
-Gmail may still block this ZIP because it contains `.cmd` launchers and PowerShell
-scripts, even without DLLs. Upload the full ZIP to Google Drive and send a link to
-the intended recipient. See **SHARING.txt** and
-[Google's attachment guidance](https://support.google.com/mail/answer/6590/).
+Share the complete ZIP via a Drive download link if Gmail blocks the executable attachments. See SHARING.txt.

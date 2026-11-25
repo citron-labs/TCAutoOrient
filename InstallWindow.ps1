@@ -10,14 +10,14 @@ $form.Font=New-Object Drawing.Font('Segoe UI',10)
 $title=New-Object Windows.Forms.Label; $title.Text='TC Auto Orient'; $title.Location=New-Object Drawing.Point(24,20); $title.Size=New-Object Drawing.Size(550,40); $title.Font=New-Object Drawing.Font('Segoe UI',22,[Drawing.FontStyle]::Bold)
 $subtitle=New-Object Windows.Forms.Label; $subtitle.Text='Revit 2024 / 2025 / 2026 | Current-user setup'; $subtitle.Location=New-Object Drawing.Point(26,68); $subtitle.Size=New-Object Drawing.Size(550,26)
 $heading=New-Object Windows.Forms.Label; $heading.Text='Ready to install'; $heading.Location=New-Object Drawing.Point(24,108); $heading.Size=New-Object Drawing.Size(550,32); $heading.Font=New-Object Drawing.Font('Segoe UI',15,[Drawing.FontStyle]::Bold)
-$description=New-Object Windows.Forms.Label; $description.Text="Select installed Revit versions below. Close those Revit windows first.`nSetup compiles locally, installs the add-in, and verifies the files."; $description.Location=New-Object Drawing.Point(26,150); $description.Size=New-Object Drawing.Size(550,55)
+$description=New-Object Windows.Forms.Label; $description.Text="Select installed Revit versions below. Close those Revit windows first.`nSetup installs the bundled add-in and verifies the files."; $description.Location=New-Object Drawing.Point(26,150); $description.Size=New-Object Drawing.Size(550,55)
 $list=New-Object Windows.Forms.CheckedListBox; $list.Location=New-Object Drawing.Point(26,215); $list.Size=New-Object Drawing.Size(548,85); $list.CheckOnClick=$true
 foreach($v in @('2024','2025','2026')) {
     $found=Test-Path -LiteralPath (Join-Path $env:ProgramFiles "Autodesk/Revit $v/RevitAPI.dll")
     $text=if($found){"Revit $v"}else{"Revit $v - not detected"}
     $null=$list.Items.Add($text,$found)
 }
-$status=New-Object Windows.Forms.Label; $status.Location=New-Object Drawing.Point(26,310); $status.Size=New-Object Drawing.Size(548,45); $status.Text='2024: Windows compiler. 2025/2026: matching .NET SDK required.'
+$status=New-Object Windows.Forms.Label; $status.Location=New-Object Drawing.Point(26,310); $status.Size=New-Object Drawing.Size(548,45); $status.Text='Offline installation. No .NET SDK or Visual Studio required.'
 $progress=New-Object Windows.Forms.ProgressBar; $progress.Location=New-Object Drawing.Point(26,362); $progress.Size=New-Object Drawing.Size(548,18)
 $install=New-Object Windows.Forms.Button; $install.Text='Install'; $install.Location=New-Object Drawing.Point(362,408); $install.Size=New-Object Drawing.Size(100,35)
 $cancel=New-Object Windows.Forms.Button; $cancel.Text='Cancel'; $cancel.Location=New-Object Drawing.Point(474,408); $cancel.Size=New-Object Drawing.Size(100,35)

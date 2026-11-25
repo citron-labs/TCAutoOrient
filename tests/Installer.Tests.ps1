@@ -1,4 +1,4 @@
-param([string]$BuiltDll=(Join-Path $PSScriptRoot '../artifacts/local/2024/TCAutoOrient.dll'))
+param([string]$BuiltDll=(Join-Path $PSScriptRoot '../binaries/2024/TCAutoOrient.dll'))
 . "$PSScriptRoot/../Installer.Common.ps1"
 $stage=New-TCStage
 $checks=0
