@@ -53,7 +53,7 @@ namespace TCAutoOrient {
     var schema=Ensure(fm,Schema,SpecTypeId.Int.Integer,false);
     foreach(FamilyType type in fm.Types) {fm.CurrentType=type;fm.Set(auto,1);fm.Set(quadrant,0);fm.Set(schema,1);}
     for(int q=0;q<4;q++) {
-     fm.SetFormula(Param(fm,Orientation.NumberFlag(q)),Quadrant+" = "+q);
+     fm.SetFormula(Param(fm,Orientation.NumberFlag(q)),"and("+Quadrant+" = "+q+", not(# of Ports = 0))");
      fm.SetFormula(Param(fm,Orientation.CableFlag(q)),Quadrant+" = "+q);
     }
     fm.SetFormula(Param(fm,"Shade Right"),"# of Ports > 1");

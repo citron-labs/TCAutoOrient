@@ -1,3 +1,8 @@
+## Zero-port update
+
+After installing this update and starting Revit, run **Add-Ins > TC Auto Orient > Prepare Wall Drop1** once in your project (or parent family editor), then save/reload the family as needed. This also applies to the included demonstration families/projects, which retain the previous saved formulas until prepared.
+
+The port number automatically hides when **# of Ports = 0**, in every orientation. Nonzero counts retain their number; the cable ID and symbol remain visible. One port remains unshaded.
 # TC Auto Orient - Offline Installer
 
 Extract the entire **TC-Auto-Orient-Offline-Installer.zip**, close Revit, and double-click **Install.cmd**. Select Revit 2024, 2025 or 2026 and click Install.

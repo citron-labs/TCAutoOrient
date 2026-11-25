@@ -18,3 +18,5 @@ Limits:
   These freshly compiled binaries have not been loaded into the running sessions.
 - File deployment tests do not prove Revit startup or full interactive UI behavior.
 - No native-2026-saved family/project is included; upgrade the supplied models.
+
+Zero-port update: all three add-ins rebuilt with zero warnings/errors. The number visibility formula now includes not(# of Ports = 0). Revit was not running, so formula evaluation and model updates were not live-tested; run Prepare Wall Drop1 once.
