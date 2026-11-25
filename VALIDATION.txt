@@ -20,3 +20,7 @@ Limits:
 - Interactive success/retry screens were constructed and reviewed in source;
   automated tests verify the underlying installer, not a full manual setup session.
 - Successful file deployment does not itself prove add-in startup in Revit.
+
+Launcher fix: Install.cmd, Uninstall.cmd and the installation worker now use
+a process-only -ExecutionPolicy Bypass. Form startup and isolated 2024/2025
+installation/uninstallation were re-tested successfully. Group Policy is unchanged.

@@ -14,8 +14,10 @@ account. No precompiled add-in DLL or Autodesk API DLL is included in this packa
 
 The graphical setup shows progress and offers Retry and setup logs on failure.
 It does not close Revit automatically. Administrative privileges are not requested.
-The launcher does not override PowerShell execution policy. If your organization's
-policy blocks scripts, use its approved installation process.
+The launchers use `-ExecutionPolicy Bypass` for their own PowerShell processes only.
+They do not change the saved CurrentUser or LocalMachine execution policy.
+Organizational Group Policy still takes precedence; use your organization's
+approved installation process if it blocks this launcher.
 
 ### Prerequisites
 

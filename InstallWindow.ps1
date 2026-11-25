@@ -40,7 +40,7 @@ $install.Add_Click({
         $logs.Visible=$true; $install.Enabled=$false; $cancel.Enabled=$false; $list.Enabled=$false
         $heading.Text='Installing...'; $heading.ForeColor=[Drawing.Color]::Black
         $status.Text='Compiling against your installed Revit API. Please wait.'; $progress.Style='Marquee'
-        $arguments='-NoLogo -NoProfile -NonInteractive -File "'+(Join-Path $PSScriptRoot 'install.ps1')+'" -Version "'+($selected -join ',')+'"'
+        $arguments='-NoLogo -NoProfile -ExecutionPolicy Bypass -NonInteractive -File "'+(Join-Path $PSScriptRoot 'install.ps1')+'" -Version "'+($selected -join ',')+'"'
         $script:worker=Start-Process -FilePath (Join-Path $PSHOME 'powershell.exe') -ArgumentList $arguments -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $script:logFolder 'output.log') -RedirectStandardError (Join-Path $script:logFolder 'error.log')
         $null=$script:worker.Handle
         $timer.Start()

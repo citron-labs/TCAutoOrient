@@ -14,6 +14,7 @@ Share the complete ZIP through a normal Google Drive download link:
 
 Google's guidance: https://support.google.com/mail/answer/6590/
 
-The package does not disable antivirus, bypass execution policy, change trust
-settings, elevate privileges, or download build tools. If organizational policy
+The launcher uses a process-only PowerShell execution-policy override. It does
+not change saved policy, disable antivirus, elevate privileges, or download build
+tools. Organizational Group Policy takes precedence. If organizational policy
 blocks installation, use your organization's approved software deployment process.
