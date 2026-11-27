@@ -17,9 +17,14 @@ try {
             Write-Output "Using verified bundled add-in for Revit $($revit.Version). No SDK required."
         }
     }
+    foreach($v in $versions) {
+        $family=Get-TCBundledFamily -PackageRoot $PSScriptRoot -Version $v
+        $dest=Join-Path $stage $v
+        Copy-Item -LiteralPath $family -Destination (Join-Path $dest 'TC - Base Wall Drop AutoOrient.rfa')
+    }
     Assert-TCRevitClosed $versions
     $payload = @($versions | ForEach-Object {
-        [pscustomobject]@{Version=$_;Source=(Join-Path $stage "$_/TCAutoOrient.dll");Folder=(Join-Path $env:APPDATA "Autodesk/Revit/Addins/$_")}
+        [pscustomobject]@{Version=$_;Source=(Join-Path $stage "$_/TCAutoOrient.dll");FamilySource=(Join-Path $stage "$_/TC - Base Wall Drop AutoOrient.rfa");Folder=(Join-Path $env:APPDATA "Autodesk/Revit/Addins/$_")}
     })
     Install-TCPayload -Payload $payload -Stage $stage
     Remove-TCStage $stage

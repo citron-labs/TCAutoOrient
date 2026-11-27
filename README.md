@@ -1,83 +1,72 @@
-## Zero-port update
+# TC Auto Orient - Automatic Installer v6
 
-After installing this update and starting Revit, run **Add-Ins > TC Auto Orient > Prepare Wall Drop1** once in your project (or parent family editor), then save/reload the family as needed. This also applies to the included demonstration families/projects, which retain the previous saved formulas until prepared.
+Extract the complete ZIP and run **Install.cmd**. Select your installed Revit
+versions and click Install. If Revit is running, use **Close Revit and Retry**
+and save your work when Revit prompts you.
 
-The port number automatically hides when **# of Ports = 0**, in every orientation. Nonzero counts retain their number; the cable ID and symbol remain visible. One port remains unshaded.
-# TC Auto Orient - Offline Installer
+Start Revit and open or create a project. The add-in automatically loads
+**TC - Base Wall Drop AutoOrient**, synchronizes device labels, and applies any
+needed zero-port visibility upgrade. No manual family loading, preparation,
+ribbon panel, or Update Labels command is required. Save the project normally
+to retain the loaded family and changes.
 
-Extract the entire **TC-Auto-Orient-Offline-Installer.zip**, close Revit, and double-click **Install.cmd**. Select Revit 2024, 2025 or 2026 and click Install.
+## Included updated families
 
-This package contains a separately compiled add-in for each Revit version. Normal setup requires **no .NET SDK, Visual Studio, compilation, or Internet download**. Revit must already be installed. Revit 2024 uses the bundled .NET Framework 4.8 build; 2025/2026 use their respective .NET 8 builds.
+- `2024/TC - Base Wall Drop AutoOrient.rfa`: supplied Revit 2024 family.
+- `2025/TC - Base Wall Drop AutoOrient.rfa`: supplied Revit 2025 family.
 
-Setup installs for the current Windows account without administrator privileges. It verifies bundled DLL hashes, stages all selected versions, and backs up existing files before deployment. A deployment failure restores previous files. Setup logs are under %LOCALAPPDATA%/TCAutoOrient/SetupLogs/.
+Setup installs the matching family beside the add-in DLL. Revit 2026 uses the
+supplied 2025 family and upgrades it when loading; no native 2026 family was
+provided. The supplied files are packaged unchanged and verified by SHA-256.
 
-Installed files are under %APPDATA%/Autodesk/Revit/Addins/<year>/:
-- TCAutoOrient.addin
-- TCAutoOrient/TCAutoOrient.dll
+The add-in recognizes both the new family name and the older
+`TC - Base Wall Drop1` family. Existing project type values are retained when
+reloading a matching family. Older placed devices remain their existing family;
+the new family becomes available for placement automatically.
 
-Double-click **Uninstall.cmd** to remove the add-in. Families, projects and unrelated files are preserved. Close Revit before installation, updates or removal.
+## Automatic behavior
 
-The launchers use a process-only PowerShell execution-policy override; saved policies are unchanged and organizational Group Policy takes precedence.
+The v2 number/ID position swap remains in effect. Rotating or placing devices
+updates their label arrangement. A port count of zero hides the port number;
+the cable ID and symbol remain visible. More than one port uses shading.
 
-For a custom Revit location:
-```powershell
-./install.ps1 -Version 2025 -RevitPath 'D:/Autodesk/Revit 2025'
-```
+Opening projects and loading older prepared families queues setup for Revit's
+next writable idle callback. Family documents are skipped. Read-only or busy
+projects are deferred. A failed automatic setup reports the error in Revit;
+resolve it and reopen the project to retry. Existing-family formula migrations
+save a backup under `Documents/TC Auto Orient/<year>/`.
 
-## Installer architecture
+Devices with **TC Auto Orient** unchecked retain their manual layout. Grouped
+devices are skipped by the rotation updater. Layout selection uses model XY,
+not the rotation of each plan view. The add-in does not resolve collisions with
+unrelated annotations.
 
-Install.cmd -> InstallWindow.ps1 -> install.ps1 -> verified bundled DLL + .addin
+## Installation details
 
-Source compilation remains an optional developer operation:
-```powershell
-./install.ps1 -Version '2024,2025' -BuildFromSource
-```
-Only this optional mode requires the local compiler/reference packs matching the installed Revit runtime (including SDK 10 when Revit uses .NET 10). Normal graphical setup never invokes it.
+Setup is offline and installs for the current Windows user without administrator
+privileges. No .NET SDK, Visual Studio, or build is required. Separate DLLs are
+included for Revit 2024 (.NET Framework 4.8) and 2025/2026 (.NET 8).
 
-## Included family and demonstration projects
+Files are installed under `%APPDATA%/Autodesk/Revit/Addins/<year>/`:
 
-- `deliverables/2024/TC - Base Wall Drop1.rfa`: prepared device family.
-- `deliverables/2024/TC_WALL DROP SYMBOL.rfa`: its edited nested annotation.
-- `deliverables/2024/TC Wall Drop1 - Auto Orient Demo.rvt`: five-device example.
-- `deliverables/2025/`: native 2025 parent family and example project.
-- `backup/`: original family before editing.
-- `verification/`: short/long label previews and previous live add-in test results.
+- `TCAutoOrient.addin`
+- `TCAutoOrient/TCAutoOrient.dll`
+- `TCAutoOrient/TC - Base Wall Drop AutoOrient.rfa`
 
-Revit 2026 can upgrade the 2024/2025 family and project. A native-2026-saved model
-is not included. Load the parent family for device placement; the annotation is
-already embedded inside it.
+Setup verifies DLL and family hashes and rolls back payload files if deployment
+fails. Logs are under `%LOCALAPPDATA%/TCAutoOrient/SetupLogs/`.
 
-## Formatting behavior
+Run **Uninstall.cmd** with Revit closed to remove the add-in. Family files and
+projects are retained. The launchers use a process-only PowerShell policy
+override; saved execution policies are unchanged.
 
-Leave **TC Auto Orient** checked on the device. Rotating or placing it selects one
-of four cardinal label arrangements: number above the cable ID for side layouts,
-and number left of the cable ID for top/bottom layouts. One port has no shading;
-more than one port uses the original shaded half. Long cable IDs grow outward,
-away from the number and symbol, with direction-specific alignment.
-
-**Add-Ins ? TC Auto Orient ? Update Labels** updates existing prepared devices.
-**Prepare Wall Drop1** prepares this specific parent family in the family editor or
-project, including a backup when run in a project. Its expected name is
-`TC - Base Wall Drop1`, with the supplied parameter names and nested symbol.
-
-Uncheck **TC Auto Orient** to choose **TC Label Quadrant** manually: 0 north,
-1 east, 2 south, 3 west. Angled devices choose the nearest quadrant; text uses Revit's
-Keep Readable behavior. Quadrants refer to model XY, not each rotated plan view.
-Grouped devices are skipped by the updater. This tool does not resolve collisions
-with unrelated annotations. Without the add-in, the family retains its last layout
-but no longer reacts automatically to rotations.
+Optional source build: `./install.ps1 -Version '2024,2025' -BuildFromSource`.
+Only this developer mode requires a compiler and matching reference packs.
 
 ## Validation
 
-See VALIDATION.txt. Installation and removal are tested in isolated user-data directories for installed Revit 2024/2025. Revit 2026 compiled successfully and its payload deployment was tested in isolation; startup and model behavior in Revit 2026 remain untested.
-
-```powershell
-./tests/Installer.Tests.ps1
-./tests/Bundled.Tests.ps1
-./tests/Installer.EndToEnd.ps1
-powershell.exe -NoProfile -ExecutionPolicy Bypass -STA -File ./InstallWindow.ps1 -SmokeTest
-```
-
-## Sharing
-
-Share the complete ZIP via a Drive download link if Gmail blocks the executable attachments. See SHARING.txt.
+Revit 2024/2025/2026 builds, 139 orientation checks, 13 installer checks,
+8 bundled DLL/family checks, 8 simulated close-process checks, isolated
+2024/2025 install/uninstall, and setup form construction passed. No live Revit
+family-loading or ribbon-removal verification was performed for this release.
+See `VALIDATION.txt` for details and historical results.

@@ -1,4 +1,48 @@
-TC Auto Orient - Offline installer validation
+Updated families and automatic loading (v6) - 2026-11-27
+- Bundles the supplied 2024 and 2025 AutoOrient RFAs unchanged.
+- Revit 2026 uses the supplied 2025 RFA (upgrade-on-load, not live verified).
+- Installs and verifies the family alongside the DLL; payload rollback includes RFA.
+- Loads the family on project open/create with existing type values preserved.
+- Recognizes both AutoOrient and legacy Wall Drop1 family names.
+- Removes the ribbon panel and both external-command buttons/classes.
+- All three builds passed with zero warnings/errors.
+- 139 orientation, 13 installer, 8 bundled payload, and 8 process-close checks passed.
+- Isolated Revit 2024/2025 install/uninstall and UI construction smoke test passed.
+- Live Revit family loading, updated family geometry, and ribbon removal remain unverified.
+Installer close-and-retry button (v5) - 2026-11-27
+- Offers normal closure of blocking Revit windows for selected versions only.
+- Waits for process exit and reruns installation checks before deployment.
+- Eight tests passed using fake processes; no live processes were closed.
+- Ten installer checks, isolated 2024/2025 install/uninstall, and UI construction smoke test passed.
+- A live Revit save-prompt/exit interaction was not tested.
+
+Automatic upgrade (v4) - 2026-11-27
+- Project open/create and prepared-family changes queue automatic upgrades.
+- Idling performs family edits/reload outside read-only document events and updaters.
+- Already upgraded families skip migration; busy/read-only documents are deferred.
+- Opened projects synchronize their existing labels without a ribbon command.
+- Revit 2024/2025/2026 builds and 139 orientation regression checks passed.
+- Bundled integrity/deployment checks passed. Live event behavior is not verified in Revit.
+
+Zero-port number visibility migration (v3) - 2026-11-27
+- Update Labels upgrades loaded prepared families to the zero-port number formula.
+- All four number visibility formulas require a nonzero port count.
+- Migration retains project type values and writes a family backup first.
+- V2 orientation/label swap behavior is unchanged.
+- Revit 2024/2025/2026 builds and 139 orientation regression checks passed.
+- Bundled payload integrity and installer deployment checks passed.
+- Live regression coverage now includes zero ports; it was not run in Revit for this update.
+
+Label position swap correction - 2026-11-26
+- Exchanges number/ID positions in every automatic layout from the prior build.
+- 139 orientation checks cover the opposite-pair swap and preserved text rotation
+  in all cardinal directions and nearby angles, with and without reflection.
+- Revit 2024, 2025 and 2026 builds succeeded with zero warnings/errors.
+- Updated bundled payloads passed 7 integrity/deployment checks and 10 installer checks.
+- The previous build was reported reversed by the user in Revit 2025.
+- No live visual verification of this correction was performed; the user is testing in Revit.
+
+TC Auto Orient - Offline installer validation (previous release)
 Date: 2026-11-25
 
 - Release DLLs compiled successfully for Revit 2024, 2025, 2026, zero warnings/errors.
@@ -18,5 +62,3 @@ Limits:
   These freshly compiled binaries have not been loaded into the running sessions.
 - File deployment tests do not prove Revit startup or full interactive UI behavior.
 - No native-2026-saved family/project is included; upgrade the supplied models.
-
-Zero-port update: all three add-ins rebuilt with zero warnings/errors. The number visibility formula now includes not(# of Ports = 0). Revit was not running, so formula evaluation and model updates were not live-tested; run Prepare Wall Drop1 once.

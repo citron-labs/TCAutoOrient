@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+ <PropertyGroup>
+  <RevitVersion Condition="'$(RevitVersion)'==''">2024</RevitVersion>
+  <TargetFramework Condition="'$(RevitVersion)'=='2024'">net48</TargetFramework>
+  <TargetFramework Condition="'$(RevitVersion)'!='2024'">net8.0-windows</TargetFramework>
+  <TargetFramework Condition="'$(RuntimeTarget)'!=''">$(RuntimeTarget)</TargetFramework>
+  <RevitPath>C:/Program Files/Autodesk/Revit $(RevitVersion)</RevitPath>
+  <LangVersion>latest</LangVersion><PlatformTarget>x64</PlatformTarget>
+  <AssemblyName>TCAutoOrient</AssemblyName><DefaultItemExcludes>$(DefaultItemExcludes);obj/**</DefaultItemExcludes>
+  <OutputPath>../artifacts/$(RevitVersion)/</OutputPath><AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+ </PropertyGroup>
+ <ItemGroup Condition="'$(RevitVersion)'=='2024'">
+  <Reference Include="RevitAPI"><HintPath>$(RevitPath)/RevitAPI.dll</HintPath><Private>false</Private><ExternallyResolved>true</ExternallyResolved></Reference>
+  <Reference Include="RevitAPIUI"><HintPath>$(RevitPath)/RevitAPIUI.dll</HintPath><Private>false</Private><ExternallyResolved>true</ExternallyResolved></Reference>
+ </ItemGroup>
+ <ItemGroup Condition="'$(RevitVersion)'=='2025'">
+  <PackageReference Include="Nice3point.Revit.Api.RevitAPI" Version="2025.0.2" IncludeAssets="compile;build" PrivateAssets="all"/>
+  <PackageReference Include="Nice3point.Revit.Api.RevitAPIUI" Version="2025.0.2" IncludeAssets="compile;build" PrivateAssets="all"/>
+ </ItemGroup>
+ <ItemGroup Condition="'$(RevitVersion)'=='2026'">
+  <PackageReference Include="Nice3point.Revit.Api.RevitAPI" Version="2026.0.4" IncludeAssets="compile;build" PrivateAssets="all"/>
+  <PackageReference Include="Nice3point.Revit.Api.RevitAPIUI" Version="2026.0.4" IncludeAssets="compile;build" PrivateAssets="all"/>
+ </ItemGroup>
+ <ItemGroup Condition="'$(RevitVersion)'=='2024'"><PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all"/></ItemGroup>
+</Project>

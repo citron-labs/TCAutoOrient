@@ -6,9 +6,10 @@ try {
     foreach($year in @('2024','2025','2026')) {
         $runtime=if($year -eq '2024'){4}else{8}
         $dll=Get-TCBundledAssembly $stage ([pscustomobject]@{Version=$year;Runtime=$runtime})
+        $family=Get-TCBundledFamily $stage $year
         $folder=Join-Path $stage "Addins/$year"
-        Install-TCPayload @([pscustomobject]@{Version=$year;Source=$dll;Folder=$folder}) $stage
-        Test-TCDeployment $folder $dll
+        Install-TCPayload @([pscustomobject]@{Version=$year;Source=$dll;FamilySource=$family;Folder=$folder}) $stage
+        Test-TCDeployment $folder $dll $family
         $checks++
     }
     $null=Get-TCBundledAssembly $stage ([pscustomobject]@{Version='2025';Runtime=10});$checks++
@@ -25,5 +26,9 @@ try {
     $failed=$false
     try {$null=Get-TCBundledAssembly $stage ([pscustomobject]@{Version='2024';Runtime=4})}catch{$failed=$true}
     if(!$failed){throw 'Corrupt binary accepted'};$checks++
+    [IO.File]::AppendAllText((Join-Path $stage 'binaries/2024/TC - Base Wall Drop AutoOrient.rfa'),'corrupt')
+    $failed=$false
+    try {$null=Get-TCBundledFamily $stage '2024'}catch{$failed=$true}
+    if(!$failed){throw 'Corrupt family accepted'};$checks++
     Write-Output "$checks bundled payload checks passed. Revit 2026 deployment is simulated, not live-tested."
 } finally {Remove-TCStage $stage}

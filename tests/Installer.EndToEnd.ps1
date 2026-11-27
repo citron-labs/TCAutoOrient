@@ -14,6 +14,9 @@ try {
         if(!(Test-Path -LiteralPath $manifest)){throw "Missing $v registration"}
         [xml]$xml=Get-Content -Raw -LiteralPath $manifest
         if(!(Test-Path -LiteralPath $xml.RevitAddIns.AddIn.Assembly)){throw "Missing $v DLL"}
+        $family=Join-Path (Split-Path -Parent $xml.RevitAddIns.AddIn.Assembly) 'TC - Base Wall Drop AutoOrient.rfa'
+        $source=Get-TCBundledFamily (Join-Path $PSScriptRoot '..') $v
+        if(!(Test-Path -LiteralPath $family) -or (Get-FileHash -LiteralPath $family).Hash -ne (Get-FileHash -LiteralPath $source).Hash){throw "Missing or incorrect $v family"}
     }
     & "$PSScriptRoot/../Uninstall.ps1" -Version $Version -ConfirmRemoval
     if(@(Get-ChildItem -LiteralPath $env:APPDATA -Filter 'TCAutoOrient.addin' -Recurse).Count){throw 'Uninstall failed'}

@@ -16,7 +16,7 @@ namespace TCAutoOrient {
    if(auto==null || auto.AsInteger()!=1)return false;
    // Face-hosted orientation is more reliable than LocationPoint.Rotation.
    var facing=f.FacingOrientation;
-   int q=Orientation.Quadrant(facing.X,facing.Y);
+   int q=Orientation.LabelQuadrant(facing.X,facing.Y,f.Mirrored);
    if(q<0)return false;
    var p=f.LookupParameter(FamilySetup.Quadrant);
    if(p.IsReadOnly||p.AsInteger()==q)return false;

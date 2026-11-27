@@ -1,0 +1,157 @@
+[
+  {
+    "test": "rotation",
+    "id": 1751625,
+    "step": 0,
+    "quadrant": 3,
+    "passed": true
+  },
+  {
+    "test": "rotation",
+    "id": 1751625,
+    "step": 1,
+    "quadrant": 2,
+    "passed": true
+  },
+  {
+    "test": "rotation",
+    "id": 1751625,
+    "step": 2,
+    "quadrant": 1,
+    "passed": true
+  },
+  {
+    "test": "rotation",
+    "id": 1751625,
+    "step": 3,
+    "quadrant": 0,
+    "passed": true
+  },
+  {
+    "test": "rotation",
+    "id": 1751840,
+    "step": 0,
+    "quadrant": 2,
+    "passed": true
+  },
+  {
+    "test": "rotation",
+    "id": 1751840,
+    "step": 1,
+    "quadrant": 1,
+    "passed": true
+  },
+  {
+    "test": "rotation",
+    "id": 1751840,
+    "step": 2,
+    "quadrant": 0,
+    "passed": true
+  },
+  {
+    "test": "rotation",
+    "id": 1751840,
+    "step": 3,
+    "quadrant": 3,
+    "passed": true
+  },
+  {
+    "test": "rotation",
+    "id": 1752085,
+    "step": 0,
+    "quadrant": 0,
+    "passed": true
+  },
+  {
+    "test": "rotation",
+    "id": 1752085,
+    "step": 1,
+    "quadrant": 3,
+    "passed": true
+  },
+  {
+    "test": "rotation",
+    "id": 1752085,
+    "step": 2,
+    "quadrant": 2,
+    "passed": true
+  },
+  {
+    "test": "rotation",
+    "id": 1752085,
+    "step": 3,
+    "quadrant": 1,
+    "passed": true
+  },
+  {
+    "test": "rotation",
+    "id": 1752248,
+    "step": 0,
+    "quadrant": 1,
+    "passed": true
+  },
+  {
+    "test": "rotation",
+    "id": 1752248,
+    "step": 1,
+    "quadrant": 0,
+    "passed": true
+  },
+  {
+    "test": "rotation",
+    "id": 1752248,
+    "step": 2,
+    "quadrant": 3,
+    "passed": true
+  },
+  {
+    "test": "rotation",
+    "id": 1752248,
+    "step": 3,
+    "quadrant": 2,
+    "passed": true
+  },
+  {
+    "test": "rotation",
+    "id": 1752655,
+    "step": 0,
+    "quadrant": 1,
+    "passed": true
+  },
+  {
+    "test": "rotation",
+    "id": 1752655,
+    "step": 1,
+    "quadrant": 0,
+    "passed": true
+  },
+  {
+    "test": "rotation",
+    "id": 1752655,
+    "step": 2,
+    "quadrant": 3,
+    "passed": true
+  },
+  {
+    "test": "rotation",
+    "id": 1752655,
+    "step": 3,
+    "quadrant": 2,
+    "passed": true
+  },
+  {
+    "test": "ports",
+    "ports": 1,
+    "passed": true
+  },
+  {
+    "test": "ports",
+    "ports": 2,
+    "passed": true
+  },
+  {
+    "test": "ports",
+    "ports": 4,
+    "passed": true
+  }
+]

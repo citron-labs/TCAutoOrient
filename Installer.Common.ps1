@@ -29,7 +29,7 @@ function Get-TCRevit([string]$Version, [string]$RevitPath = '') {
     [pscustomobject]@{ Version=$Version; Path=$RevitPath; Runtime=$runtime }
 }
 
-function Assert-TCRevitClosed([string[]]$Versions) {
+function Get-TCBlockingRevitProcesses([string[]]$Versions) {
     foreach ($process in @(Get-Process Revit -ErrorAction SilentlyContinue)) {
         $path = $null
         try { $path = $process.Path } catch { }
@@ -37,9 +37,24 @@ function Assert-TCRevitClosed([string[]]$Versions) {
         foreach ($version in $Versions) {
             $major = [Diagnostics.FileVersionInfo]::GetVersionInfo($path).FileMajorPart
             if ($major -eq ([int]$version - 2000) -or $path -match "Revit $version[\\/]") {
-                throw "Close Revit $version (process $($process.Id)), then retry. Your open projects will not be closed automatically."
+                $process
+                break
             }
         }
+    }
+}
+
+function Assert-TCRevitClosed([string[]]$Versions) {
+    foreach($process in @(Get-TCBlockingRevitProcesses $Versions)) {
+        throw "Close Revit (process $($process.Id)), then retry, or use Close Revit and Retry in Setup."
+    }
+}
+
+function Request-TCRevitClose([string[]]$Versions) {
+    foreach($process in @(Get-TCBlockingRevitProcesses $Versions)) {
+        # Request a normal exit so Revit can display its save/cancel prompts.
+        # Never terminate the process or discard unsaved projects.
+        if(!$process.CloseMainWindow()) { throw "Could not request a normal close for Revit (process $($process.Id)). Close this Revit process manually, then retry." }
     }
 }
 
@@ -56,6 +71,15 @@ function Get-TCBundledAssembly([string]$PackageRoot, [object]$Revit) {
     if((Get-FileHash -LiteralPath $dll -Algorithm SHA256).Hash -ne $info.sha256) { throw "Bundled Revit $($Revit.Version) DLL failed its integrity check. Download and extract a fresh package." }
     if([Reflection.AssemblyName]::GetAssemblyName($dll).Name -ne 'TCAutoOrient') { throw 'Unexpected bundled assembly identity.' }
     return $dll
+}
+
+function Get-TCBundledFamily([string]$PackageRoot,[string]$Version) {
+    $folder=Join-Path $PackageRoot "binaries/$Version"
+    $family=Join-Path $folder 'TC - Base Wall Drop AutoOrient.rfa'
+    $info=Get-Content -Raw -LiteralPath (Join-Path $folder 'build.json') | ConvertFrom-Json
+    if(!(Test-Path -LiteralPath $family -PathType Leaf)){throw "Bundled Revit $Version wall-drop family is missing. Extract the complete installer ZIP."}
+    if($info.revitVersion -ne $Version -or (Get-FileHash -LiteralPath $family -Algorithm SHA256).Hash -ne $info.familySha256){throw "Bundled Revit $Version family failed its integrity check."}
+    return $family
 }
 
 function New-TCStage {
@@ -85,7 +109,7 @@ function Write-TCManifest([string]$Path, [string]$Assembly) {
     $xml.Save($Path)
 }
 
-function Test-TCDeployment([string]$Folder, [string]$Source) {
+function Test-TCDeployment([string]$Folder, [string]$Source, [string]$FamilySource='') {
     $dll = Join-Path $Folder 'TCAutoOrient/TCAutoOrient.dll'
     $manifest = Join-Path $Folder 'TCAutoOrient.addin'
     if (!(Test-Path -LiteralPath $dll) -or !(Test-Path -LiteralPath $manifest)) { throw 'Installed DLL or manifest is missing.' }
@@ -95,6 +119,10 @@ function Test-TCDeployment([string]$Folder, [string]$Source) {
     }
     if ((Get-FileHash -LiteralPath $dll).Hash -ne (Get-FileHash -LiteralPath $Source).Hash) { throw 'Installed DLL hash verification failed.' }
     if ([Reflection.AssemblyName]::GetAssemblyName($dll).Name -ne 'TCAutoOrient') { throw 'Unexpected installed assembly identity.' }
+    if($FamilySource) {
+        $family=Join-Path $Folder 'TCAutoOrient/TC - Base Wall Drop AutoOrient.rfa'
+        if(!(Test-Path -LiteralPath $family) -or (Get-FileHash -LiteralPath $family).Hash -ne (Get-FileHash -LiteralPath $FamilySource).Hash){throw 'Installed family verification failed.'}
+    }
 }
 
 function Install-TCPayload([object[]]$Payload, [string]$Stage) {
@@ -103,7 +131,11 @@ function Install-TCPayload([object[]]$Payload, [string]$Stage) {
         foreach ($item in $Payload) {
             $dll = Join-Path $item.Folder 'TCAutoOrient/TCAutoOrient.dll'
             $manifest = Join-Path $item.Folder 'TCAutoOrient.addin'
-            foreach ($target in @($dll,$manifest)) {
+            $family=Join-Path $item.Folder 'TCAutoOrient/TC - Base Wall Drop AutoOrient.rfa'
+            $familySource=if($item.PSObject.Properties['FamilySource']){[string]$item.FamilySource}else{''}
+            $targets=@($dll,$manifest)
+            if($familySource){$targets+= $family}
+            foreach ($target in $targets) {
                 $backup = Join-Path $Stage ([guid]::NewGuid().ToString('N') + '.backup')
                 $exists = Test-Path -LiteralPath $target -PathType Leaf
                 if ($exists) { Copy-Item -LiteralPath $target -Destination $backup }
@@ -111,8 +143,9 @@ function Install-TCPayload([object[]]$Payload, [string]$Stage) {
             }
             New-Item -ItemType Directory -Force -Path (Split-Path -Parent $dll) | Out-Null
             Copy-Item -LiteralPath $item.Source -Destination $dll -Force
+            if($familySource){Copy-Item -LiteralPath $familySource -Destination $family -Force}
             Write-TCManifest -Path $manifest -Assembly $dll
-            Test-TCDeployment -Folder $item.Folder -Source $item.Source
+            Test-TCDeployment -Folder $item.Folder -Source $item.Source -FamilySource $familySource
             Write-Output "Verified Revit $($item.Version): $dll"
         }
     } catch {
